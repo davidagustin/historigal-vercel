@@ -1,26 +1,229 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+a {
+    margin: 5px 5px 5px 5px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+ul {
+    list-style: none
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+ul.pagination {
+    display: flex;
+    flex-direction: row;
+    margin-top: 15px;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+input {
+    border: 1px solid #eaeaea;
+    height: 20px;
+    margin: 10px;
+    outline: none;
+    padding: 10px;
+    width: 500px;
+}
+
+input:hover {
+    border-color: #a0a0a0 #b9b9b9 #b9b9b9 #b9b9b9;
+}
+
+input:focus {
+    border-color: #4d90fe;
+}
+
+input[type="submit"] {
+    background: #f2f2f2;
+    border: 1px solid #f2f2f2;
+    border-radius: 2px;
+    color: #757575;
+    cursor: default;
+    font-size: 14px;
+    font-weight: bold;
+    height: 36px;
+    padding: 0 16px;
+    width: 100px;
+}
+
+input[type="submit"]:hover {
+    background: #f8f8f8;
+    border: 1px solid #c6c6c6;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    color: #222;
+}
+
+.inputBarInSearch {
+    border-radius: 40px;
+    font: 16px arial, sans-serif;
+    width: 640px;
+}
+
+.logoInHome {
+    display: block;
+    height: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 200px;
+    width: 275px;
+}
+
+.logoInSearch {
+    display: block;
+    height: 36px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 19px;
+    width: 97px;
+}
+
+.logoInSearch:hover {
+    cursor: pointer;
+}
+
+.itemDescription {
+    font-family: 'Roboto', arial, sans-serif;
+    font-weight: 400;
+    line-height: 18.2px;
+    max-width: 575px;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.searchInHome {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.searchInSearch {
+    align-items: flex-start;
+    background-color: white;
+    border-bottom: rgb(235, 235, 235) solid 1px;
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 30px;
+    position: sticky !important;
+    top: 0px !important;
+}
+
+.form {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 30px;
+}
+
+.inputBarHome {
+    background: rgb(241, 243, 244);
+    border-radius: 40px;
+    height: 46px;
+    width: 563px;
+}
+
+.itemContainer {
+    padding-left: 170px;
+    padding-top: 33px;
+}
+
+.itemGreenText {
+    color: #006621;
+    cursor: pointer;
+    font-size: 14px;
+    font-style: normal;
+    padding-top: 1px;
+}
+
+.titleSearchText {
+    color: #1a0dab;
+    display: inline-block;
+    font-family: arial, sans-serif;
+    font-size: 18px;
+    font-weight: normal;
+}
+
+.titleSearchText:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.totalItems {
+    color: rgb(128, 128, 128);
+    font-family: arial, sans-serif;
+    font-size: small;
+    margin-left: 165px;
+    margin-right: 919px;
+    margin-top: 16px;
+}
+
+.emptySearchReturn {
+    font-family: arial, sans-serif;
+    font-size: medium;
+    font-weight: normal;
+    padding-left: 167px;
+    padding-top: 72px;
+}
+
+.emptySearchReturn li {
+    list-style-type: disc !important;
+}
+
+.logoInSearchBottom {
+    display: flex;
+    height: 36px;
+    margin-top: 200px;
+    padding-left: 400px;
+    padding-right: 1127px;
+    width: 97px;
+}
+
+.greyFilling {
+    background-color: rgb(242, 242, 242);
+    border-top: rgb(228, 228, 228) 1px solid;
+    display: block;
+    height: 67px;
+    width: auto;
+}
+
+li.previous.disabled {
+    display: none;
+}
+
+li.previous {
+    margin-right: 39px
+}
+
+li.break-me {
+    display: none;
+}
+
+li.next.disabled {
+    display: none;
+}
+
+li.next {
+    margin-left: 39px
+}
+
+li:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+li.active {
+    color: black;
+    cursor: default !important;
+    text-decoration: initial !important;
+}
+
+li.active:hover {
+    cursor: default !important;
+    text-decoration: initial !important;
+}
+
+.pagination {
+    color: #4285f4;
+    display: block;
+    font-weight: normal;
+    margin-bottom: 30px;
+    margin-left: 280px;
+    white-space: nowrap
 }

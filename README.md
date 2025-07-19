@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Historigal
 
-## Getting Started
+Learn about history with a Google themed interface.
 
-First, run the development server:
+## Key Features
+
+- **Google Themed Interface** - A similar feel to the popular website (https://www.google.com)
+  - Search functionality is virtually the same
+- **37,860 Historical Entries** in Database
+  - Events covered from 300 B.C. to the year 2012
+- **Next.js 15** with TypeScript
+- **Responsive Design** with custom CSS styling
+
+## How To Use
+
+To clone and run this application, you'll need Git and Node.js (which comes with npm) installed on your computer. From your command line:
 
 ```bash
+# Clone this repository
+git clone https://github.com/davidagustin/historigal-vercel.git
+
+# Go into the repository
+cd historigal-vercel
+
+# Install dependencies
+npm install
+
+# Run the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Technology Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Next.js 15** - React framework
+- **TypeScript** - Type safety
+- **Axios** - HTTP client for API calls
+- **React Paginate** - Pagination component
+- **Custom CSS** - Google-themed styling
 
-## Learn More
+## API Endpoints
 
-To learn more about Next.js, take a look at the following resources:
+- `GET /api/events` - Get all historical events
+- `GET /api/events?description_like=<search_term>` - Search events by description
+- `GET /api/events?description_like=<search_term>&_page=<page>&_limit=<limit>` - Paginated search results
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+MIT
 
-## Deploy on Vercel
+## About
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This is a Next.js adaptation of the original Historigal project, featuring a Google-themed interface for searching through historical events.
