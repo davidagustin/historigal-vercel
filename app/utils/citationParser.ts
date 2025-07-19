@@ -153,7 +153,7 @@ export function formatCitation(citation: Citation): string {
   }
   
   if (citation.date || citation.year) {
-    parts.push(citation.date || citation.year);
+    parts.push(citation.date || citation.year || '');
   }
   
   if (citation.url) {
