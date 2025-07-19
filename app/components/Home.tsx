@@ -32,7 +32,7 @@ export default function Home({ inputBarText, handleChange, changeView }: HomePro
           value={inputBarText}
           onChange={handleChange}
           placeholder={'Search Historigal'}
-          autoComplete="off" 
+          autoComplete="on"
         />
         <input 
           className='submitButton'

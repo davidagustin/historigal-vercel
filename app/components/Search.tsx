@@ -27,53 +27,71 @@ export default function Search({ resetInputBar, changeView, handleChange, inputB
   const [searchQuery, setSearchQuery] = useState("");
   const [emptySearch, setEmptySearch] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
+  // Initialize search when component mounts
   useEffect(() => {
-    setSearchQuery(inputBarText);
-    getData();
-  }, [inputBarText]);
+    if (inputBarText) {
+      setSearchQuery(inputBarText);
+      performSearch(inputBarText, 1);
+    }
+  }, []); // Only run on mount
 
-  const getData = async (pageNumber = 0) => {
+  const performSearch = async (query: string, page: number = 1) => {
+    if (!query.trim()) {
+      setEmptySearch(true);
+      setSearchResult([]);
+      setTotalItemsInSearch(0);
+      setPageCount(0);
+      return;
+    }
+
+    setIsLoading(true);
     try {
-      const results = await axios.get(`/api/events?description_like=${searchQuery}`);
-      const totalItems = results.data.length;
+      // First, get total count
+      const countResponse = await axios.get(`/api/events?description_like=${encodeURIComponent(query)}`);
+      const totalItems = countResponse.data.length;
       const newPageCount = Math.ceil(totalItems / 10);
       
       setTotalItemsInSearch(totalItems);
       setPageCount(newPageCount);
-      setCurrentPage(pageNumber);
+      setCurrentPage(page - 1); // ReactPaginate uses 0-based indexing
 
-      const paginatedResults = await axios.get(`/api/events?description_like=${searchQuery}&_page=${pageNumber}&_limit=10`);
-      
-      if (paginatedResults.data.length === 0) {
+      if (totalItems === 0) {
         setEmptySearch(true);
         setSearchResult([]);
       } else {
+        // Get paginated results
+        const paginatedResponse = await axios.get(
+          `/api/events?description_like=${encodeURIComponent(query)}&_page=${page}&_limit=10`
+        );
+        
         setEmptySearch(false);
-        setSearchResult(paginatedResults.data);
+        setSearchResult(paginatedResponse.data);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
       setEmptySearch(true);
       setSearchResult([]);
+      setTotalItemsInSearch(0);
+      setPageCount(0);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (inputBarText === "") {
+    if (!inputBarText.trim()) {
       return;
     }
     setSearchQuery(inputBarText);
-    setTotalItemsInSearch(null);
-    setPageCount(0);
-    setEmptySearch(true);
-    setCurrentPage(0);
-    getData();
+    performSearch(inputBarText, 1);
   };
 
   const handlePageClick = (e: { selected: number }) => {
-    getData(e.selected + 1);
+    const newPage = e.selected + 1; // Convert to 1-based indexing
+    performSearch(searchQuery, newPage);
     window.scrollTo(0, 0);
   };
 
@@ -96,12 +114,15 @@ export default function Search({ resetInputBar, changeView, handleChange, inputB
             type='text'
             value={inputBarText}
             onChange={handleChange}
-            autoComplete="off"
+            autoComplete="on"
+            placeholder="Search Historigal"
           />
         </form>
       </div>
       <div className={'searchItems'}>
-        {emptySearch ? (
+        {isLoading ? (
+          <div style={{ padding: '20px', textAlign: 'center' }}>Loading...</div>
+        ) : emptySearch ? (
           <EmptySearchReturn searchQuery={searchQuery} />
         ) : (
           <div>
@@ -114,21 +135,23 @@ export default function Search({ resetInputBar, changeView, handleChange, inputB
               src='/historigal.png'
               alt='Historigal Logo'
             />
-            <div>
-              <ReactPaginate
-                initialPage={currentPage}
-                previousLabel={'previous'}
-                nextLabel={'next'}
-                breakLabel={'...'}
-                breakClassName={'break-me'}
-                pageCount={pageCount}
-                marginPagesDisplayed={0}
-                pageRangeDisplayed={9}
-                onPageChange={handlePageClick}
-                containerClassName={'pagination'}
-                activeClassName={'active'}
-              />
-            </div>
+            {pageCount > 1 && (
+              <div>
+                <ReactPaginate
+                  initialPage={currentPage}
+                  previousLabel={'previous'}
+                  nextLabel={'next'}
+                  breakLabel={'...'}
+                  breakClassName={'break-me'}
+                  pageCount={pageCount}
+                  marginPagesDisplayed={0}
+                  pageRangeDisplayed={9}
+                  onPageChange={handlePageClick}
+                  containerClassName={'pagination'}
+                  activeClassName={'active'}
+                />
+              </div>
+            )}
           </div>
         )}
       </div>

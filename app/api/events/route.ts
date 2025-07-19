@@ -33,5 +33,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(paginatedEvents);
   }
   
+  // Return all filtered results if no pagination
   return NextResponse.json(events);
 } 
