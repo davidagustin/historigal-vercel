@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import SearchInput from './SearchInput';
 import { parseCitations, formatCitation } from '../utils/citationParser';
 
@@ -41,6 +42,7 @@ interface SearchResults {
 }
 
 export default function SearchView({ query, onBackToHome }: SearchViewProps) {
+  const router = useRouter();
   const [results, setResults] = useState<SearchResults | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -102,8 +104,7 @@ export default function SearchView({ query, onBackToHome }: SearchViewProps) {
   const handleNewSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchInput.trim()) {
-      setCurrentPage(1);
-      fetchResults(searchInput.trim());
+      router.push(`/search?q=${encodeURIComponent(searchInput.trim())}`);
     }
   };
 

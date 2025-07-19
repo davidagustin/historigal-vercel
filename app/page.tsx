@@ -1,33 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import HomeView from './components/HomeView';
-import SearchView from './components/SearchView';
 
 export default function HomePage() {
-  const [currentView, setCurrentView] = useState<'home' | 'search'>('home');
-  const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
 
   const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    setCurrentView('search');
-  };
-
-  const handleBackToHome = () => {
-    setCurrentView('home');
-    setSearchQuery('');
+    if (query.trim()) {
+      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+    }
   };
 
   return (
     <main className="min-h-screen">
-      {currentView === 'home' ? (
-        <HomeView onSearch={handleSearch} />
-      ) : (
-        <SearchView 
-          query={searchQuery} 
-          onBackToHome={handleBackToHome}
-        />
-      )}
+      <HomeView onSearch={handleSearch} />
     </main>
   );
 } 
