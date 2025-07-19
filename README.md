@@ -1,54 +1,224 @@
-# Historigal
+# Historigal - Historical Events Search
 
-Learn about history with a Google themed interface.
+A modern, responsive web application for searching through historical events with a Google-like interface. Built with Next.js 15, TypeScript, and Tailwind CSS.
 
-## Key Features
+## 🌟 Features
 
-- **Google Themed Interface** - A similar feel to the popular website (https://www.google.com)
-  - Search functionality is virtually the same
-- **37,860 Historical Entries** in Database
-  - Events covered from 300 B.C. to the year 2012
-- **Next.js 15** with TypeScript
-- **Responsive Design** with custom CSS styling
+### 🔍 **Advanced Search**
+- **Google-like Autocomplete**: Real-time search suggestions as you type
+- **Debounced Search**: Optimized API calls with 300ms debouncing
+- **Smart Filtering**: Search through event descriptions, dates, and categories
+- **Instant Results**: Fast, responsive search experience
 
-## How To Use
+### 📱 **Mobile-First Design**
+- **Fully Responsive**: Optimized for mobile, tablet, and desktop
+- **Touch-Friendly**: Proper button sizes and spacing for mobile devices
+- **Responsive Typography**: Text scales appropriately across all screen sizes
+- **Mobile Pagination**: Optimized pagination controls for small screens
 
-To clone and run this application, you'll need Git and Node.js (which comes with npm) installed on your computer. From your command line:
+### 📚 **Citation Management**
+- **Multi-Format Support**: Handles `cite web`, `cite news`, `cite book`, `cite journal`, `cite magazine`
+- **Clean Text Display**: Removes raw citation syntax from descriptions
+- **Formatted Sources**: Professional citation display with clickable links
+- **HTML Entity Decoding**: Properly renders special characters and symbols
 
-```bash
-# Clone this repository
-git clone https://github.com/davidagustin/historigal-vercel.git
+### 🎨 **Modern UI/UX**
+- **Card-Based Layout**: Clean, modern event cards with hover effects
+- **Date Badges**: Prominent date display with calendar icons
+- **Category Tags**: Organized event categorization
+- **Smooth Animations**: Subtle transitions and hover effects
+- **Professional Styling**: Consistent design language throughout
 
-# Go into the repository
-cd historigal-vercel
+### 📄 **Smart Pagination**
+- **Client-Side Pagination**: 20 items per page for optimal performance
+- **Responsive Controls**: Adapts pagination to screen size
+- **Results Summary**: Shows current page and total results
+- **Smooth Navigation**: Quick page transitions
 
-# Install dependencies
-npm install
+## 🚀 Quick Start
 
-# Run the development server
-npm run dev
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/davidagustin/historigal-vercel.git
+   cd historigal-vercel
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+4. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## 🛠️ Technology Stack
+
+### **Frontend**
+- **Next.js 15**: React framework with App Router
+- **TypeScript**: Type-safe development
+- **Tailwind CSS**: Utility-first CSS framework
+- **React Hooks**: Modern state management
+
+### **Backend**
+- **Next.js API Routes**: Serverless API endpoints
+- **JSON Database**: Local `db.json` file for data storage
+- **TypeScript**: Full-stack type safety
+
+### **Development Tools**
+- **ESLint**: Code linting and formatting
+- **PostCSS**: CSS processing
+- **Autoprefixer**: CSS vendor prefixing
+
+## 📖 Usage
+
+### **Searching Events**
+1. Enter keywords in the search bar (e.g., "World War II", "Ancient Rome")
+2. Use autocomplete suggestions for quick selection
+3. View results with pagination controls
+4. Click on source links to verify information
+
+### **Understanding Results**
+- **Date Badge**: When the event occurred
+- **Event Description**: Clean, readable event summary
+- **Category Tags**: Event classification and time period
+- **Sources**: Clickable links to original references
+
+### **Mobile Experience**
+- Swipe-friendly interface
+- Touch-optimized buttons
+- Responsive text sizing
+- Mobile-optimized pagination
+
+## 🔧 API Endpoints
+
+### **Search Events**
+```
+GET /api/events?description_like={query}&_page={page}&_limit={limit}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Parameters:**
+- `description_like`: Search query (required)
+- `_page`: Page number (optional, default: 1)
+- `_limit`: Items per page (optional, default: 10)
 
-## Technology Stack
+**Response:**
+```json
+[
+  {
+    "description": "Event description with citations",
+    "date": "YYYY-MM-DD",
+    "category1": "Time period",
+    "category2": "Event category"
+  }
+]
+```
 
-- **Next.js 15** - React framework
-- **TypeScript** - Type safety
-- **Axios** - HTTP client for API calls
-- **React Paginate** - Pagination component
-- **Custom CSS** - Google-themed styling
+## 🎯 Key Features Explained
 
-## API Endpoints
+### **Citation Parsing**
+The application intelligently parses Wikipedia-style citations:
+- Extracts source information (title, author, publisher, URL)
+- Removes raw citation syntax from descriptions
+- Formats citations for professional display
+- Provides clickable source links
 
-- `GET /api/events` - Get all historical events
-- `GET /api/events?description_like=<search_term>` - Search events by description
-- `GET /api/events?description_like=<search_term>&_page=<page>&_limit=<limit>` - Paginated search results
+### **HTML Entity Handling**
+Automatically decodes common HTML entities:
+- `&amp;` → `&`
+- `&ndash;` → `–`
+- `&mdash;` → `—`
+- `&hellip;` → `…`
+- And many more...
 
-## License
+### **Responsive Design**
+Built with mobile-first approach:
+- Breakpoints: `sm:`, `md:`, `lg:`, `xl:`
+- Flexible layouts with CSS Grid and Flexbox
+- Optimized typography scaling
+- Touch-friendly interface elements
 
-MIT
+## 📁 Project Structure
 
-## About
+```
+historigal-vercel/
+├── app/
+│   ├── components/
+│   │   ├── HomeView.tsx          # Home page with search
+│   │   ├── SearchView.tsx        # Search results page
+│   │   └── SearchInput.tsx       # Reusable search input
+│   ├── utils/
+│   │   └── citationParser.ts     # Citation parsing utilities
+│   ├── api/
+│   │   └── events/
+│   │       └── route.ts          # API endpoint
+│   ├── globals.css               # Global styles
+│   ├── layout.tsx                # Root layout
+│   └── page.tsx                  # Main page
+├── public/
+│   └── historigal.png           # Logo
+├── db.json                      # Historical events database
+└── package.json
+```
 
-This is a Next.js adaptation of the original Historigal project, featuring a Google-themed interface for searching through historical events.
+## 🎨 Customization
+
+### **Styling**
+- Modify `app/globals.css` for global styles
+- Use Tailwind classes for component styling
+- Custom utilities available in CSS layers
+
+### **Data**
+- Update `db.json` to add/modify historical events
+- Ensure proper citation formatting for parsing
+- Maintain consistent data structure
+
+### **Features**
+- Extend citation parser in `app/utils/citationParser.ts`
+- Add new API endpoints in `app/api/`
+- Enhance components in `app/components/`
+
+## 🚀 Deployment
+
+### **Vercel (Recommended)**
+1. Connect your GitHub repository to Vercel
+2. Deploy automatically on push to main branch
+3. Enjoy serverless hosting with edge functions
+
+### **Other Platforms**
+- **Netlify**: Compatible with Next.js static export
+- **Railway**: Full-stack deployment support
+- **AWS**: Use with Next.js serverless functions
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## 🙏 Acknowledgments
+
+- Historical data sources and contributors
+- Next.js team for the amazing framework
+- Tailwind CSS for the utility-first approach
+- The open-source community for inspiration
+
+---
+
+**Built with ❤️ for history enthusiasts everywhere**

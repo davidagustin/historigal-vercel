@@ -10,6 +10,21 @@ interface Citation {
   year?: string;
 }
 
+function decodeHtmlEntities(text: string): string {
+  return text
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&ndash;/g, '–')
+    .replace(/&mdash;/g, '—')
+    .replace(/&hellip;/g, '…')
+    .replace(/&copy;/g, '©')
+    .replace(/&reg;/g, '®')
+    .replace(/&trade;/g, '™');
+}
+
 export function parseCitations(text: string): { cleanText: string; citations: Citation[] } {
   const citations: Citation[] = [];
   let cleanText = text;
@@ -57,6 +72,9 @@ export function parseCitations(text: string): { cleanText: string; citations: Ci
     .replace(/ampamp/g, '') // Remove HTML entity artifacts
     .replace(/\s+/g, ' ') // Normalize whitespace
     .trim();
+
+  // Decode HTML entities
+  cleanText = decodeHtmlEntities(cleanText);
 
   return { cleanText, citations };
 }

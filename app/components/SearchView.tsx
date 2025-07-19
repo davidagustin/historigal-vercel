@@ -5,6 +5,21 @@ import Image from 'next/image';
 import SearchInput from './SearchInput';
 import { parseCitations, formatCitation } from '../utils/citationParser';
 
+function decodeHtmlEntities(text: string): string {
+  return text
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&ndash;/g, '–')
+    .replace(/&mdash;/g, '—')
+    .replace(/&hellip;/g, '…')
+    .replace(/&copy;/g, '©')
+    .replace(/&reg;/g, '®')
+    .replace(/&trade;/g, '™');
+}
+
 interface SearchViewProps {
   query: string;
   onBackToHome: () => void;
@@ -314,11 +329,11 @@ export default function SearchView({ query, onBackToHome }: SearchViewProps) {
                           <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                           </svg>
-                          <span className="font-medium text-gray-700 break-words">{item.category2}</span>
+                          <span className="font-medium text-gray-700 break-words" dangerouslySetInnerHTML={{ __html: decodeHtmlEntities(item.category2) }}></span>
                           {item.category1 && (
                             <>
                               <span className="mx-2 text-gray-400 flex-shrink-0">•</span>
-                              <span className="break-words">{item.category1}</span>
+                              <span className="break-words" dangerouslySetInnerHTML={{ __html: decodeHtmlEntities(item.category1) }}></span>
                             </>
                           )}
                         </div>
