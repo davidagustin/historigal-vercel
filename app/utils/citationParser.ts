@@ -19,12 +19,35 @@ export function parseCitations(text: string): { cleanText: string; citations: Ci
     return text; // Keep the text, remove the HTML
   });
 
-  // Parse Wikipedia-style citations
-  const citationRegex = /\{\{cite web\|([^}]+)\}\}/g;
-  cleanText = cleanText.replace(citationRegex, (match, citationContent) => {
-    const citation = parseCitationContent(citationContent);
-    citations.push(citation);
-    return ''; // Remove the citation from the text
+  // Parse Wikipedia-style citations (cite web, cite news, cite book, etc.)
+  // Use a more robust approach to handle citations with nested braces
+  const citationPatterns = [
+    /\{\{cite (web|news|book|journal|magazine)\|([^}]*)\}\}/g,
+    /\{\{cite book[^}]*\}\}/g,
+    /\{\{cite news[^}]*\}\}/g,
+    /\{\{cite web[^}]*\}\}/g,
+    /\{\{cite journal[^}]*\}\}/g,
+    /\{\{cite magazine[^}]*\}\}/g
+  ];
+
+  citationPatterns.forEach(pattern => {
+    cleanText = cleanText.replace(pattern, (match) => {
+      // Extract citation type and content from the match
+      const typeMatch = match.match(/\{\{cite (web|news|book|journal|magazine)\|/);
+      const citationType = typeMatch ? typeMatch[1] : 'web';
+      
+      // Extract content between | and }}
+      const contentMatch = match.match(/\{\{cite [^|]*\|(.*)\}\}/);
+      const citationContent = contentMatch ? contentMatch[1] : '';
+      
+      if (citationContent) {
+        const citation = parseCitationContent(citationContent);
+        citation.type = citationType;
+        citations.push(citation);
+      }
+      
+      return ''; // Remove the citation from the text
+    });
   });
 
   // Clean up any remaining citation artifacts
@@ -136,10 +159,10 @@ export function extractUrls(text: string): string[] {
   }
   
   // Extract URLs from citation content
-  const citationRegex = /\{\{cite web\|([^}]+)\}\}/g;
+  const citationRegex = /\{\{cite (web|news|book|journal|magazine)\|([^}]*)\}\}/g;
   while ((match = citationRegex.exec(text)) !== null) {
-    const citationContent = match[1];
-    if (citationContent && typeof citationContent === 'string') {
+    const citationContent = match[2];
+    if (citationContent && typeof citationContent === 'string' && citationContent.length > 0) {
       const urlMatch = citationContent.match(/url=([^|]+)/);
       if (urlMatch && urlMatch[1] && typeof urlMatch[1] === 'string') {
         const extractedUrl = urlMatch[1];

@@ -305,20 +305,20 @@ export default function SearchView({ query, onBackToHome }: SearchViewProps) {
                         </div>
 
                         {/* Event Description */}
-                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 leading-relaxed mb-3 sm:mb-4 line-clamp-3">
+                        <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 leading-relaxed mb-3 sm:mb-4 line-clamp-3 break-words">
                           {cleanText}
                         </h3>
 
                         {/* Category Information */}
-                        <div className="flex items-center text-xs sm:text-sm text-gray-600 mb-3">
-                          <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="flex items-center text-xs sm:text-sm text-gray-600 mb-3 flex-wrap">
+                          <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                           </svg>
-                          <span className="font-medium text-gray-700">{item.category2}</span>
+                          <span className="font-medium text-gray-700 break-words">{item.category2}</span>
                           {item.category1 && (
                             <>
-                              <span className="mx-2 text-gray-400">•</span>
-                              <span>{item.category1}</span>
+                              <span className="mx-2 text-gray-400 flex-shrink-0">•</span>
+                              <span className="break-words">{item.category1}</span>
                             </>
                           )}
                         </div>
@@ -326,24 +326,24 @@ export default function SearchView({ query, onBackToHome }: SearchViewProps) {
                         {/* Citations */}
                         {citations.length > 0 && (
                           <div className="mt-4 pt-3 border-t border-gray-100">
-                            <div className="text-xs text-gray-500 mb-2">Sources:</div>
-                            <div className="space-y-1">
+                            <div className="text-xs sm:text-sm text-gray-500 mb-2">Sources:</div>
+                            <div className="space-y-1 sm:space-y-2">
                               {citations.map((citation, citationIndex) => (
-                                <div key={citationIndex} className="text-xs text-gray-600 flex items-start">
-                                  <span className="text-gray-400 mr-2">•</span>
-                                  <span className="flex-1">
-                                    {formatCitation(citation)}
+                                <div key={citationIndex} className="text-xs sm:text-sm text-gray-600 flex items-start">
+                                  <span className="text-gray-400 mr-2 flex-shrink-0">•</span>
+                                  <div className="flex-1 min-w-0">
+                                    <span className="break-words">{formatCitation(citation)}</span>
                                     {citation.url && (
                                       <a 
                                         href={citation.url} 
                                         target="_blank" 
                                         rel="noopener noreferrer"
-                                        className="text-blue-600 hover:text-blue-800 ml-1 underline"
+                                        className="text-blue-600 hover:text-blue-800 ml-1 underline whitespace-nowrap"
                                       >
                                         [Link]
                                       </a>
                                     )}
-                                  </span>
+                                  </div>
                                 </div>
                               ))}
                             </div>
