@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import ReactPaginate from 'react-paginate';
 import axios from 'axios';
 import { EmptySearchReturn } from './EmptySearchReturn';
@@ -24,11 +24,10 @@ export default function Search({ resetInputBar, changeView, handleChange, inputB
   const [totalItemsInSearch, setTotalItemsInSearch] = useState<number | null>(null);
   const [pageCount, setPageCount] = useState(0);
   const [searchResult, setSearchResult] = useState<SearchItem[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(inputBarText || "");
   const [emptySearch, setEmptySearch] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const hasSearchedRef = useRef(false);
 
   const performSearch = useCallback(async (query: string, page: number = 1) => {
     if (!query.trim()) {
@@ -82,21 +81,13 @@ export default function Search({ resetInputBar, changeView, handleChange, inputB
     }
   }, []);
 
-  // Initialize search when component mounts or when inputBarText changes
-  useEffect(() => {
-    // Only perform search if we haven't already searched for this query
-    if (inputBarText && inputBarText.trim() && !hasSearchedRef.current) {
+  // Perform initial search if we have inputBarText
+  React.useEffect(() => {
+    if (inputBarText && inputBarText.trim()) {
       setSearchQuery(inputBarText);
       performSearch(inputBarText, 1);
-      hasSearchedRef.current = true;
-    } else if (!inputBarText || !inputBarText.trim()) {
-      setEmptySearch(true);
-      setSearchResult([]);
-      setTotalItemsInSearch(0);
-      setPageCount(0);
-      hasSearchedRef.current = false;
     }
-  }, [inputBarText]); // Remove performSearch from dependencies
+  }, []); // Empty dependency array - only run once on mount
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
