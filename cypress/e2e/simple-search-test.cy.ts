@@ -22,12 +22,12 @@ describe('Simple Search Test - Infinite Loop Detection', () => {
     cy.wait(2000);
     
     // Count all API requests made
-    cy.get('@apiRequest.all').then((interceptions: any[]) => {
+    cy.get('@apiRequest.all').then((interceptions) => {
       const requestCount = interceptions.length;
       cy.log(`Total API requests made: ${requestCount}`);
       
       // Log all requests for debugging
-      interceptions.forEach((interception: any, index: number) => {
+      interceptions.forEach((interception, index) => {
         cy.log(`Request ${index + 1}: ${interception.request.url}`);
       });
       
@@ -64,7 +64,7 @@ describe('Simple Search Test - Infinite Loop Detection', () => {
     cy.wait(2000);
     
     // Check request count
-    cy.get('@apiRequest.all').then((interceptions: any[]) => {
+    cy.get('@apiRequest.all').then((interceptions) => {
       const requestCount = interceptions.length;
       cy.log(`Total API requests for "war": ${requestCount}`);
       

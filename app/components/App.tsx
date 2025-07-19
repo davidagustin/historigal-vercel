@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import axios from 'axios';
 import Home from './Home';
 import Search from './Search';
@@ -19,10 +19,19 @@ export default function App() {
   const [totalItems, setTotalItems] = useState<number>(0);
   const [pageCount, setPageCount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  
+  // Use ref to prevent multiple simultaneous API calls
+  const isSearchingRef = useRef(false);
 
-  const performSearch = async (query: string, page: number = 1) => {
+  const performSearch = useCallback(async (query: string, page: number = 1) => {
     console.log(`🔍 performSearch called with query: "${query}", page: ${page}`);
-    console.log(`🔍 Current view: ${view}, isLoading: ${isLoading}`);
+    console.log(`🔍 Current view: ${view}, isLoading: ${isLoading}, isSearchingRef: ${isSearchingRef.current}`);
+    
+    // Prevent multiple simultaneous searches
+    if (isSearchingRef.current) {
+      console.log('🔍 Search already in progress, skipping');
+      return;
+    }
     
     if (!query.trim()) {
       console.log('🔍 Empty query, clearing results');
@@ -33,8 +42,9 @@ export default function App() {
       return;
     }
 
-    console.log('🔍 Setting loading to true');
+    console.log('🔍 Setting loading to true and isSearchingRef to true');
     setIsLoading(true);
+    isSearchingRef.current = true;
     
     try {
       console.log(`🔍 Making API call for count: /api/events?description_like=${encodeURIComponent(query)}`);
@@ -69,35 +79,38 @@ export default function App() {
       setTotalItems(0);
       setPageCount(0);
     } finally {
-      console.log('🔍 Setting loading to false');
+      console.log('🔍 Setting loading to false and isSearchingRef to false');
       setIsLoading(false);
+      isSearchingRef.current = false;
     }
-  };
+  }, []); // Empty dependency array to prevent recreation
 
-  const resetInputBar = () => {
+  const resetInputBar = useCallback(() => {
     console.log('🔍 resetInputBar called');
     setInputBarText("");
-  };
+  }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name === 'inputBarText') {
       console.log(`🔍 handleChange: ${value}`);
       setInputBarText(value);
     }
-  };
+  }, []);
 
-  const changeView = () => {
+  const changeView = useCallback(() => {
     console.log(`🔍 changeView called, current view: ${view}`);
     
     if (view === 'home') {
       // Switching to search view
       console.log('🔍 Switching to search view');
       setView('search');
-      // Perform initial search only if we have text
+      // Perform initial search only if we have text - use setTimeout to avoid dependency issues
       if (inputBarText && inputBarText.trim()) {
-        console.log(`🔍 Performing initial search for: "${inputBarText}"`);
-        performSearch(inputBarText, 1);
+        console.log(`🔍 Scheduling initial search for: "${inputBarText}"`);
+        setTimeout(() => {
+          performSearch(inputBarText, 1);
+        }, 0);
       }
     } else {
       // Switching back to home view
@@ -107,8 +120,9 @@ export default function App() {
       setTotalItems(0);
       setPageCount(0);
       setIsLoading(false);
+      isSearchingRef.current = false;
     }
-  };
+  }, [view, inputBarText]); // Removed performSearch from dependencies
 
   console.log(`🔍 App render - view: ${view}, inputBarText: "${inputBarText}", isLoading: ${isLoading}`);
 

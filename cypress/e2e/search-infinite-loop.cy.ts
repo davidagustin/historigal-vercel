@@ -23,7 +23,7 @@ describe('Search Infinite Loop Test', () => {
     cy.wait(3000);
     
     // Check how many requests were made
-    cy.get('@kingSearch.all').then((interceptions: any[]) => {
+    cy.get('@kingSearch.all').then((interceptions) => {
       const requestCount = interceptions.length;
       cy.log(`Total API requests for "king": ${requestCount}`);
       
@@ -33,7 +33,7 @@ describe('Search Infinite Loop Test', () => {
       expect(requestCount).to.be.lessThan(10);
       
       // Log the requests for debugging
-      interceptions.forEach((interception: any, index: number) => {
+      interceptions.forEach((interception, index) => {
         cy.log(`Request ${index + 1}: ${interception.request.url}`);
       });
     });
@@ -57,7 +57,7 @@ describe('Search Infinite Loop Test', () => {
     cy.wait(3000);
     
     // Check how many requests were made
-    cy.get('@warSearch.all').then((interceptions: any[]) => {
+    cy.get('@warSearch.all').then((interceptions) => {
       const requestCount = interceptions.length;
       cy.log(`Total API requests for "war": ${requestCount}`);
       
@@ -67,7 +67,7 @@ describe('Search Infinite Loop Test', () => {
       expect(requestCount).to.be.lessThan(10);
       
       // Log the requests for debugging
-      interceptions.forEach((interception: any, index: number) => {
+      interceptions.forEach((interception, index) => {
         cy.log(`Request ${index + 1}: ${interception.request.url}`);
       });
     });
@@ -100,7 +100,7 @@ describe('Search Infinite Loop Test', () => {
         cy.wait(2000);
         
         // Check total requests
-        cy.get('@kingSearch.all').then((interceptions: any[]) => {
+        cy.get('@kingSearch.all').then((interceptions) => {
           const requestCount = interceptions.length;
           cy.log(`Total API requests after pagination: ${requestCount}`);
           
