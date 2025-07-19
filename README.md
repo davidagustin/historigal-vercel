@@ -26,6 +26,8 @@
 - **Debounced Search** - Optimized API calls with 300ms debouncing
 - **Smart Filtering** - Search through event descriptions, dates, and categories
 - **Instant Results** - Fast, responsive search experience
+- **URL Routing** - Search queries are reflected in the URL for bookmarking and sharing
+- **Browser Navigation** - Back/forward buttons work seamlessly with search history
 
 ### 📱 **Mobile-First Design**
 - **Fully Responsive** - Optimized for mobile, tablet, and desktop
@@ -116,6 +118,8 @@
 2. **Use autocomplete** suggestions for quick selection
 3. **View results** with pagination controls
 4. **Click on source links** to verify information
+5. **Bookmark or share** search URLs for easy access
+6. **Use browser navigation** (back/forward buttons) to browse search history
 
 ### **Understanding Results**
 - **📅 Date Badge** - When the event occurred
@@ -128,6 +132,7 @@
 - **📱 Touch-optimized** buttons
 - **📏 Responsive text** sizing
 - **📄 Mobile-optimized** pagination
+- **🌐 URL sharing** - Search URLs work perfectly on mobile devices
 
 ---
 
@@ -136,6 +141,15 @@
 ### **Search Events**
 ```http
 GET /api/events?description_like={query}&_page={page}&_limit={limit}
+```
+
+### **URL Structure**
+```
+Home Page:     /
+Search Page:   /search?q={query}
+Examples:      /search?q=World%20War%20II
+               /search?q=Ancient%20Rome
+               /search?q=Industrial%20Revolution
 ```
 
 #### **Parameters**
@@ -205,6 +219,8 @@ historigal-vercel/
 │   ├── 📁 api/
 │   │   └── 📁 events/
 │   │       └── 🔌 route.ts          # API endpoint
+│   ├── 📁 search/
+│   │   └── 📄 page.tsx              # Search page with URL routing
 │   ├── 🎨 globals.css               # Global styles
 │   ├── 🏗️ layout.tsx                # Root layout
 │   └── 📄 page.tsx                  # Main page
@@ -232,6 +248,7 @@ historigal-vercel/
 - Extend citation parser in `app/utils/citationParser.ts`
 - Add new API endpoints in `app/api/`
 - Enhance components in `app/components/`
+- Add new routes in `app/` directory for additional pages
 
 ---
 
