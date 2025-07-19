@@ -1,21 +1,26 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import './globals.css'
+
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: "Historigal - Learn about history with a Google themed interface",
-  description: "Search through 37,860 historical entries from 300 B.C. to 2012 with a Google-themed interface",
-};
+  title: 'Historigal - Historical Events Search',
+  description: 'Search through historical events with Google-like interface',
+}
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
-      <body>
-        {children}
+      <body className={inter.className}>
+        <div className="min-h-screen bg-gray-50">
+          {children}
+        </div>
       </body>
     </html>
-  );
-}
+  )
+} 

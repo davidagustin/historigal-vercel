@@ -2,37 +2,48 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-// Read the database file
-const dbPath = path.join(process.cwd(), 'db.json');
-const dbData = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+interface EventItem {
+  description: string;
+  date: string;
+  category1?: string;
+  category2: string;
+}
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  
-  const description_like = searchParams.get('description_like');
-  const _page = searchParams.get('_page');
-  const _limit = searchParams.get('_limit');
-  
-  let events = dbData.events || [];
-  
-  // Filter by description if provided
-  if (description_like) {
-    events = events.filter((event: any) => 
-      event.description.toLowerCase().includes(description_like.toLowerCase())
-    );
-  }
-  
-  // Handle pagination
-  if (_page && _limit) {
-    const page = parseInt(_page);
-    const limit = parseInt(_limit);
+  try {
+    const { searchParams } = new URL(request.url);
+    const descriptionLike = searchParams.get('description_like');
+    const page = parseInt(searchParams.get('_page') || '1');
+    const limit = parseInt(searchParams.get('_limit') || '10');
+
+    // Read the database file
+    const dbPath = path.join(process.cwd(), 'db.json');
+    const dbContent = fs.readFileSync(dbPath, 'utf-8');
+    const db = JSON.parse(dbContent);
+    const events: EventItem[] = db.events || [];
+
+    let filteredEvents = events;
+
+    // Filter by description if search parameter is provided
+    if (descriptionLike) {
+      const searchTerm = descriptionLike.toLowerCase();
+      filteredEvents = events.filter(event =>
+        event.description.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    // Apply pagination
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
-    
-    const paginatedEvents = events.slice(startIndex, endIndex);
+    const paginatedEvents = filteredEvents.slice(startIndex, endIndex);
+
+    // Return the results
     return NextResponse.json(paginatedEvents);
+  } catch (error) {
+    console.error('Error fetching events:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch events' },
+      { status: 500 }
+    );
   }
-  
-  // Return all filtered results if no pagination
-  return NextResponse.json(events);
 } 
