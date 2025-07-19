@@ -1,17 +1,9 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import ReactPaginate from 'react-paginate';
-import axios from 'axios';
 import { EmptySearchReturn } from './EmptySearchReturn';
 import { SearchItems } from './SearchItems';
-
-interface SearchProps {
-  resetInputBar: () => void;
-  changeView: () => void;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  inputBarText: string;
-}
 
 interface SearchItem {
   description: string;
@@ -20,74 +12,37 @@ interface SearchItem {
   category2: string;
 }
 
-export default function Search({ resetInputBar, changeView, handleChange, inputBarText }: SearchProps) {
-  const [totalItemsInSearch, setTotalItemsInSearch] = useState<number | null>(null);
-  const [pageCount, setPageCount] = useState(0);
-  const [searchResult, setSearchResult] = useState<SearchItem[]>([]);
+interface SearchProps {
+  resetInputBar: () => void;
+  changeView: () => void;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  inputBarText: string;
+  searchResults: SearchItem[];
+  totalItems: number;
+  pageCount: number;
+  isLoading: boolean;
+  performSearch: (query: string, page?: number) => Promise<void>;
+}
+
+export default function Search({ 
+  resetInputBar, 
+  changeView, 
+  handleChange, 
+  inputBarText, 
+  searchResults, 
+  totalItems, 
+  pageCount, 
+  isLoading, 
+  performSearch 
+}: SearchProps) {
   const [searchQuery, setSearchQuery] = useState(inputBarText || "");
   const [emptySearch, setEmptySearch] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const performSearch = useCallback(async (query: string, page: number = 1) => {
-    if (!query.trim()) {
-      setEmptySearch(true);
-      setSearchResult([]);
-      setTotalItemsInSearch(0);
-      setPageCount(0);
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-    setEmptySearch(false);
-    
-    try {
-      console.log('Searching for:', query, 'page:', page);
-      
-      // First, get total count
-      const countResponse = await axios.get(`/api/events?description_like=${encodeURIComponent(query)}`);
-      const totalItems = countResponse.data.length;
-      const newPageCount = Math.ceil(totalItems / 10);
-      
-      console.log('Total items found:', totalItems, 'Page count:', newPageCount);
-      
-      setTotalItemsInSearch(totalItems);
-      setPageCount(newPageCount);
-      setCurrentPage(page - 1); // ReactPaginate uses 0-based indexing
-
-      if (totalItems === 0) {
-        setEmptySearch(true);
-        setSearchResult([]);
-      } else {
-        // Get paginated results
-        const paginatedResponse = await axios.get(
-          `/api/events?description_like=${encodeURIComponent(query)}&_page=${page}&_limit=10`
-        );
-        
-        console.log('Paginated results:', paginatedResponse.data.length);
-        
-        setEmptySearch(false);
-        setSearchResult(paginatedResponse.data);
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setEmptySearch(true);
-      setSearchResult([]);
-      setTotalItemsInSearch(0);
-      setPageCount(0);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  // Perform initial search if we have inputBarText
+  // Update emptySearch based on results
   React.useEffect(() => {
-    if (inputBarText && inputBarText.trim()) {
-      setSearchQuery(inputBarText);
-      performSearch(inputBarText, 1);
-    }
-  }, []); // Empty dependency array - only run once on mount
+    setEmptySearch(totalItems === 0 && !isLoading);
+  }, [totalItems, isLoading]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,6 +57,7 @@ export default function Search({ resetInputBar, changeView, handleChange, inputB
     const newPage = e.selected + 1; // Convert to 1-based indexing
     console.log('Page clicked:', newPage);
     performSearch(searchQuery, newPage);
+    setCurrentPage(e.selected);
     window.scrollTo(0, 0);
   };
 
@@ -137,8 +93,8 @@ export default function Search({ resetInputBar, changeView, handleChange, inputB
         ) : (
           <div>
             <SearchItems 
-              totalItemsInSearch={totalItemsInSearch || 0}
-              results={searchResult}
+              totalItemsInSearch={totalItems}
+              results={searchResults}
             />
             <img 
               className={'logoInSearchBottom'}
