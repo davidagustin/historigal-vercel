@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ReactPaginate from 'react-paginate';
 import axios from 'axios';
 import { EmptySearchReturn } from './EmptySearchReturn';
@@ -29,20 +29,7 @@ export default function Search({ resetInputBar, changeView, handleChange, inputB
   const [currentPage, setCurrentPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Initialize search when component mounts
-  useEffect(() => {
-    if (inputBarText && inputBarText.trim()) {
-      setSearchQuery(inputBarText);
-      performSearch(inputBarText, 1);
-    } else {
-      setEmptySearch(true);
-      setSearchResult([]);
-      setTotalItemsInSearch(0);
-      setPageCount(0);
-    }
-  }, [inputBarText]); // Run when inputBarText changes
-
-  const performSearch = async (query: string, page: number = 1) => {
+  const performSearch = useCallback(async (query: string, page: number = 1) => {
     if (!query.trim()) {
       setEmptySearch(true);
       setSearchResult([]);
@@ -92,7 +79,20 @@ export default function Search({ resetInputBar, changeView, handleChange, inputB
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []); // Empty dependency array since this function doesn't depend on any props or state
+
+  // Initialize search when component mounts or when inputBarText changes
+  useEffect(() => {
+    if (inputBarText && inputBarText.trim()) {
+      setSearchQuery(inputBarText);
+      performSearch(inputBarText, 1);
+    } else {
+      setEmptySearch(true);
+      setSearchResult([]);
+      setTotalItemsInSearch(0);
+      setPageCount(0);
+    }
+  }, [inputBarText, performSearch]); // Include performSearch in dependencies
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
