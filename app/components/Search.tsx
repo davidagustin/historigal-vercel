@@ -31,11 +31,16 @@ export default function Search({ resetInputBar, changeView, handleChange, inputB
 
   // Initialize search when component mounts
   useEffect(() => {
-    if (inputBarText) {
+    if (inputBarText && inputBarText.trim()) {
       setSearchQuery(inputBarText);
       performSearch(inputBarText, 1);
+    } else {
+      setEmptySearch(true);
+      setSearchResult([]);
+      setTotalItemsInSearch(0);
+      setPageCount(0);
     }
-  }, []); // Only run on mount
+  }, [inputBarText]); // Run when inputBarText changes
 
   const performSearch = async (query: string, page: number = 1) => {
     if (!query.trim()) {
@@ -43,15 +48,22 @@ export default function Search({ resetInputBar, changeView, handleChange, inputB
       setSearchResult([]);
       setTotalItemsInSearch(0);
       setPageCount(0);
+      setIsLoading(false);
       return;
     }
 
     setIsLoading(true);
+    setEmptySearch(false);
+    
     try {
+      console.log('Searching for:', query, 'page:', page);
+      
       // First, get total count
       const countResponse = await axios.get(`/api/events?description_like=${encodeURIComponent(query)}`);
       const totalItems = countResponse.data.length;
       const newPageCount = Math.ceil(totalItems / 10);
+      
+      console.log('Total items found:', totalItems, 'Page count:', newPageCount);
       
       setTotalItemsInSearch(totalItems);
       setPageCount(newPageCount);
@@ -65,6 +77,8 @@ export default function Search({ resetInputBar, changeView, handleChange, inputB
         const paginatedResponse = await axios.get(
           `/api/events?description_like=${encodeURIComponent(query)}&_page=${page}&_limit=10`
         );
+        
+        console.log('Paginated results:', paginatedResponse.data.length);
         
         setEmptySearch(false);
         setSearchResult(paginatedResponse.data);
@@ -91,6 +105,7 @@ export default function Search({ resetInputBar, changeView, handleChange, inputB
 
   const handlePageClick = (e: { selected: number }) => {
     const newPage = e.selected + 1; // Convert to 1-based indexing
+    console.log('Page clicked:', newPage);
     performSearch(searchQuery, newPage);
     window.scrollTo(0, 0);
   };
@@ -121,7 +136,7 @@ export default function Search({ resetInputBar, changeView, handleChange, inputB
       </div>
       <div className={'searchItems'}>
         {isLoading ? (
-          <div style={{ padding: '20px', textAlign: 'center' }}>Loading...</div>
+          <div style={{ padding: '20px', textAlign: 'center', fontSize: '16px' }}>Loading...</div>
         ) : emptySearch ? (
           <EmptySearchReturn searchQuery={searchQuery} />
         ) : (
