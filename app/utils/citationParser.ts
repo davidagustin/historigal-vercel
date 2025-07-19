@@ -10,7 +10,8 @@ interface Citation {
   year?: string;
 }
 
-function decodeHtmlEntities(text: string): string {
+function decodeHtmlEntities(text: string | undefined | null): string {
+  if (!text) return '';
   return text
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
