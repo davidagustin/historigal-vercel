@@ -114,7 +114,7 @@ export default function Search({ resetInputBar, changeView, handleChange, inputB
             type='text'
             value={inputBarText}
             onChange={handleChange}
-            autoComplete="on"
+            autoComplete="off"
             placeholder="Search Historigal"
           />
         </form>
