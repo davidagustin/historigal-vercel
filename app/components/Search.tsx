@@ -36,13 +36,7 @@ export default function Search({
   performSearch 
 }: SearchProps) {
   const [searchQuery, setSearchQuery] = useState(inputBarText || "");
-  const [emptySearch, setEmptySearch] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-
-  // Update emptySearch based on results
-  React.useEffect(() => {
-    setEmptySearch(totalItems === 0 && !isLoading);
-  }, [totalItems, isLoading]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,6 +54,9 @@ export default function Search({
     setCurrentPage(e.selected);
     window.scrollTo(0, 0);
   };
+
+  // Determine if we should show empty state
+  const showEmptyState = totalItems === 0 && !isLoading;
 
   return (
     <div>
@@ -88,7 +85,7 @@ export default function Search({
       <div className={'searchItems'}>
         {isLoading ? (
           <div style={{ padding: '20px', textAlign: 'center', fontSize: '16px' }}>Loading...</div>
-        ) : emptySearch ? (
+        ) : showEmptyState ? (
           <EmptySearchReturn searchQuery={searchQuery} />
         ) : (
           <div>
