@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const descriptionLike = searchParams.get('description_like');
     const page = parseInt(searchParams.get('_page') || '1');
-    const limit = parseInt(searchParams.get('_limit') || '10');
+    const limit = searchParams.get('_limit');
 
     // Read the database file
     const dbPath = path.join(process.cwd(), 'db.json');
@@ -24,26 +24,29 @@ export async function GET(request: NextRequest) {
 
     let filteredEvents = events;
 
-    // Filter by description if search parameter is provided
+    // Filter by description if provided
     if (descriptionLike) {
       const searchTerm = descriptionLike.toLowerCase();
-      filteredEvents = events.filter(event =>
+      filteredEvents = events.filter(event => 
         event.description.toLowerCase().includes(searchTerm)
       );
     }
 
-    // Apply pagination
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
+    // If no limit is specified, return all results
+    if (!limit) {
+      return NextResponse.json(filteredEvents);
+    }
+
+    // Apply pagination only if limit is specified
+    const limitNum = parseInt(limit);
+    const startIndex = (page - 1) * limitNum;
+    const endIndex = startIndex + limitNum;
     const paginatedEvents = filteredEvents.slice(startIndex, endIndex);
 
-    // Return the results
+    // Return the paginated results
     return NextResponse.json(paginatedEvents);
   } catch (error) {
-    console.error('Error fetching events:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch events' },
-      { status: 500 }
-    );
+    console.error('Error reading database:', error);
+    return NextResponse.json({ error: 'Failed to fetch events' }, { status: 500 });
   }
 } 
