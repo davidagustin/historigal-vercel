@@ -1,11 +1,11 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import SearchView from '../components/SearchView';
 import HomeView from '../components/HomeView';
 
-export default function SearchPage() {
+function SearchPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const query = searchParams.get('q') || '';
@@ -32,5 +32,13 @@ export default function SearchPage() {
       query={query} 
       onBackToHome={handleBackToHome}
     />
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SearchPageContent />
+    </Suspense>
   );
 } 

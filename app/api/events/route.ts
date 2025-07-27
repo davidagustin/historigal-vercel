@@ -9,6 +9,42 @@ interface EventItem {
   category2: string;
 }
 
+// Cache the database content to avoid reading from disk on every request
+let cachedDb: { events: EventItem[] } | null = null;
+let lastReadTime = 0;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+function getDatabase(): { events: EventItem[] } {
+  const now = Date.now();
+  
+  // Return cached data if it's still valid
+  if (cachedDb && (now - lastReadTime) < CACHE_DURATION) {
+    return cachedDb;
+  }
+  
+  try {
+    const dbPath = path.join(process.cwd(), 'db.json');
+    
+    // Check if file exists
+    if (!fs.existsSync(dbPath)) {
+      console.error('Database file not found:', dbPath);
+      return { events: [] };
+    }
+    
+    const dbContent = fs.readFileSync(dbPath, 'utf-8');
+    const db = JSON.parse(dbContent);
+    
+    // Cache the result
+    cachedDb = db;
+    lastReadTime = now;
+    
+    return db;
+  } catch (error) {
+    console.error('Error reading database:', error);
+    return { events: [] };
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -16,10 +52,8 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('_page') || '1');
     const limit = searchParams.get('_limit');
 
-    // Read the database file
-    const dbPath = path.join(process.cwd(), 'db.json');
-    const dbContent = fs.readFileSync(dbPath, 'utf-8');
-    const db = JSON.parse(dbContent);
+    // Get database content
+    const db = getDatabase();
     const events: EventItem[] = db.events || [];
 
     let filteredEvents = events;
@@ -46,7 +80,7 @@ export async function GET(request: NextRequest) {
     // Return the paginated results
     return NextResponse.json(paginatedEvents);
   } catch (error) {
-    console.error('Error reading database:', error);
+    console.error('Error processing request:', error);
     return NextResponse.json({ error: 'Failed to fetch events' }, { status: 500 });
   }
 } 
